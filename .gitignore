@@ -1,0 +1,8 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+
+data/
+report/
+evals/scene_pipeline/generated/
+evals/scene_pipeline/eval_runs/

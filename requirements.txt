@@ -1,0 +1,8 @@
+openai
+pyyaml
+gradio
+huggingface_hub
+pillow
+fastmcp
+pytest
+pytest-xdist

@@ -1,0 +1,1633 @@
+overview:
+- name: navigate
+  description: 绝对位置导航
+  scene: 通用
+  category: 导航
+  skill_type: 原子技能
+  input_params: goal_pose(x,y,theta); frame_id; tolerance_m; max_speed_mps; timeout_s
+  output_params: success(bool); final_pose(x,y,theta); duration_s; error_code
+- name: move
+  description: 相对位置移动
+  scene: 通用
+  category: 导航
+  skill_type: 原子技能
+  input_params: delta_pose(dx,dy,dtheta); base_frame; speed_mps; collision_check(bool);
+    timeout_s
+  output_params: success(bool); final_pose(x,y,theta); path_clear(bool); error_code
+- name: follow
+  description: 跟随运动目标
+  scene: 通用
+  category: 导航
+  skill_type: 高级技能
+  input_params: target_id; follow_distance_m; max_speed_mps; replan_hz; lost_timeout_s
+  output_params: success(bool); tracking(bool); final_pose(x,y,theta); error_code
+- name: overcome_obstacle
+  description: 绕行障碍
+  scene: 通用
+  category: 导航
+  skill_type: 高级技能
+  input_params: goal_pose|local_goal; obstacle_map; clearance_m; strategy_set; timeout_s
+  output_params: success(bool); selected_strategy; detour_path_id; error_code
+- name: stop
+  description: 停止移动
+  scene: 通用
+  category: 导航
+  skill_type: 原子技能
+  input_params: stop_mode(normal|emergency); decel_limit_mps2
+  output_params: success(bool); stopped(bool); residual_speed_mps; error_code
+- name: turn around
+  description: 转身
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: yaw_deg; angular_speed_dps; frame_id
+  output_params: success(bool); final_yaw_deg; error_code
+- name: set height
+  description: 调整高度
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: target_height_m; speed_mps; safety_margin_m
+  output_params: success(bool); final_height_m; error_code
+- name: set_posture
+  description: 调整姿态
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: posture_id|joint_targets; transition_time_s; collision_check(bool)
+  output_params: success(bool); final_posture_id; error_code
+- name: lean
+  description: 倾斜
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: axis(roll|pitch); angle_deg; duration_s
+  output_params: success(bool); final_angle_deg; stable(bool); error_code
+- name: reset
+  description: 复位
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: reset_profile(home|safe); keep_grasp(bool)
+  output_params: success(bool); final_state; error_code
+- name: orient
+  description: 调整朝向
+  scene: 通用
+  category: 姿态
+  skill_type: 原子技能
+  input_params: target_orientation(r,p,y)|target_vector; frame_id; tolerance_deg
+  output_params: success(bool); final_orientation(r,p,y); error_code
+- name: scan
+  description: 高级技能，返回全局结果
+  scene: 通用
+  category: 观测
+  skill_type: 高级技能
+  input_params: roi|scan_waypoints; sensor_mode; resolution; object_filter
+  output_params: success(bool); detected_objects[]; scene_map_id; confidence; error_code
+- name: look_at
+  description: 调整摄像头观测
+  scene: 通用
+  category: 观测
+  skill_type: 原子技能
+  input_params: target_id|target_point(x,y,z); keep_track(bool); timeout_s
+  output_params: success(bool); in_view(bool); camera_pose; error_code
+- name: grasp
+  description: 抓住
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|target_pose; grasp_type; grip_force_n; approach_vector;
+    timeout_s
+  output_params: success(bool); grasp_pose; grasp_quality; error_code
+- name: release
+  description: 松开抓住的东西
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: release_pose|target_container; open_width_mm; drop_height_limit_m
+  output_params: success(bool); released(bool); object_pose_est; error_code
+- name: regrasp
+  description: 调整手中握住的度物体的姿势
+  scene: 通用
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; current_grasp; new_grasp_pose; support_pose; retry_limit
+  output_params: success(bool); new_grasp_quality; object_stable(bool); error_code
+- name: suction
+  description: 吸附式抓取（吸盘手）
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|target_pose; vacuum_kpa; seal_timeout_s
+  output_params: success(bool); attached(bool); vacuum_level_kpa; error_code
+- name: close_effector
+  description: 夹取（夹爪）
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_width_mm; grip_force_n; speed
+  output_params: success(bool); final_width_mm; contact_detected(bool); error_code
+- name: open_effector
+  description: 释放（夹爪）
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: open_width_mm; speed
+  output_params: success(bool); final_width_mm; released(bool); error_code
+- name: hold
+  description: 持有
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; hold_force_n; duration_s; compliance_mode
+  output_params: success(bool); holding(bool); slip_detected(bool); error_code
+- name: drop
+  description: 丢弃，扔
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: drop_pose|drop_zone_id; drop_height_m; safety_check(bool)
+  output_params: success(bool); dropped(bool); landing_pose_est; error_code
+- name: carry
+  description: 拿着
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; destination_pose; max_speed_mps; keep_orientation(bool)
+  output_params: success(bool); arrived(bool); object_retained(bool); error_code
+- name: lift
+  description: 抬起
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; lift_height_m; lift_speed_mps; stability_check(bool)
+  output_params: success(bool); final_height_m; stable(bool); error_code
+- name: handout
+  description: 递给
+  scene: 通用
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; receiver_id|handover_pose; release_condition(force|voice);
+    wait_timeout_s
+  output_params: success(bool); handed_over(bool); human_ack(bool); error_code
+- name: takeover
+  description: 接过
+  scene: 通用
+  category: 操作
+  skill_type: 复合技能
+  input_params: giver_id|handover_pose; grasp_type; accept_condition(load_detected);
+    wait_timeout_s
+  output_params: success(bool); taken_over(bool); object_secured(bool); error_code
+- name: push
+  description: 推
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|contact_pose; direction_vector; distance_m; force_limit_n
+  output_params: success(bool); final_pose; displacement_m; error_code
+- name: pull
+  description: 拉
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|handle_pose; direction_vector; distance_m; force_limit_n
+  output_params: success(bool); final_pose; displacement_m; error_code
+- name: press
+  description: 按压
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_pose; press_force_n; depth_mm; hold_time_s
+  output_params: success(bool); activated(bool); contact_force_n; error_code
+- name: rotate
+  description: 旋转/拧转
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|axis; angle_deg; direction(cw|ccw); torque_limit_nm
+  output_params: success(bool); final_angle_deg; applied_torque_nm; error_code
+- name: open_box
+  description: 打开盒子
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; handle_pose|lid_pose; open_extent(angle|distance); force_limit_n;
+    timeout_s
+  output_params: success(bool); state(open); final_pose; resistance_level; error_code
+- name: close_box
+  description: 关上盒子
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; close_target_pose; force_limit_n; latch_check(bool); timeout_s
+  output_params: success(bool); state(closed); latch_ok(bool); error_code
+- name: wipe
+  description: 擦
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: area_id|path_points[]; pressure_n; pass_count; speed_mps
+  output_params: success(bool); coverage_pct; residue_score; error_code
+- name: clean
+  description: 打扫，收拾
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: area_map_id; clean_policy; quality_threshold; time_budget_s
+  output_params: success(bool); cleaned_area_pct; quality_score; needs_reclean(bool);
+    error_code
+- name: spray
+  description: 喷洒
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_area; spray_amount_ml; pattern; standoff_distance_m
+  output_params: success(bool); sprayed_volume_ml; coverage_pct; spill_detected(bool);
+    error_code
+- name: sort
+  description: 高级技能，分拣
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: items[]; sort_rule; bin_layout; priority
+  output_params: success(bool); sorted_count; mis_sort_count; assignment_map_id; error_code
+- name: pour
+  description: 倾倒
+  scene: 通用
+  category: 操作
+  skill_type: 原子技能
+  input_params: source_id; target_id; volume_ml|until_condition; max_tilt_deg
+  output_params: success(bool); poured_volume_ml; spill_detected(bool); error_code
+- name: align
+  description: 对齐
+  scene: 通用
+  category: 操作
+  skill_type: 高级技能
+  input_params: object_id; reference_pose; tolerance_mm; max_iterations
+  output_params: success(bool); pose_error_mm; iterations; error_code
+- name: insert
+  description: 插入，放入（花瓶/笔帽）
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; target_slot_pose; insertion_axis; depth_mm; force_limit_n
+  output_params: success(bool); inserted(bool); insertion_depth_mm; error_code
+  applicable_scenes: 办公/工业/医药
+- name: fold
+  description: 折叠
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; fold_pattern; fold_line; tension_n
+  output_params: success(bool); folded(bool); fold_quality; error_code
+  applicable_scenes: 家居/医药/康养
+- name: unfold
+  description: 展开
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; target_extent; flatten_force_n
+  output_params: success(bool); unfolded(bool); coverage_pct; error_code
+  applicable_scenes: 家居/医药/康养
+- name: tuck
+  description: 塞入
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; slot_id|target_gap_pose; tuck_depth_mm
+  output_params: success(bool); tucked(bool); final_depth_mm; error_code
+  applicable_scenes: 家居/医药/康养
+- name: stretch
+  description: 拉伸
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; direction_vector; target_length_mm; max_force_n
+  output_params: success(bool); final_length_mm; elastic_recovery_pct; error_code
+  applicable_scenes: 家居/医药/康养
+- name: cover
+  description: 盖住
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: cover_object_id; target_id; alignment_tolerance_mm
+  output_params: success(bool); covered(bool); coverage_pct; error_code
+  applicable_scenes: 家居/医药/康养
+- name: uncover
+  description: 揭开
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id; removal_path; hold_object(bool)
+  output_params: success(bool); uncovered(bool); removed_object_pose; error_code
+  applicable_scenes: 家居/医药/康养
+- name: mop
+  description: 拖地
+  scene: 场景能力
+  category: 操作
+  skill_type: 复合技能
+  input_params: area_map_id; path_pattern; wet_level; pass_count
+  output_params: success(bool); cleaned_area_pct; water_used_ml; residue_score; error_code
+  applicable_scenes: 商超/工业/医药
+- name: sweep
+  description: 清扫
+  scene: 场景能力
+  category: 操作
+  skill_type: 高级技能
+  input_params: area_map_id; dirt_map|roi; edge_policy; pass_count
+  output_params: success(bool); collected_debris_pct; missed_zones[]; error_code
+  applicable_scenes: 家居/办公/工业/商超/康养
+- name: stack
+  description: 堆放
+  scene: 场景能力
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_ids[]; target_stack_pose; max_stack_height; alignment_tolerance_mm
+  output_params: success(bool); stacked_count; stack_stability_score; error_code
+  applicable_scenes: 商超/工业/医药
+- name: unstack
+  description: 拿走叠放的物体
+  scene: 场景能力
+  category: 操作
+  skill_type: 复合技能
+  input_params: source_stack_pose; pick_count; target_place_pose
+  output_params: success(bool); moved_count; remaining_height_mm; error_code
+  applicable_scenes: 商超/工业/医药
+- name: stamp
+  description: 盖章
+  scene: 场景能力
+  category: 操作
+  skill_type: 复合技能
+  input_params: stamp_id; target_pose; press_force_n; dwell_ms; ink_check(bool)
+  output_params: success(bool); stamped(bool); print_quality; error_code
+  applicable_scenes: 办公/工业/医药
+- name: scoop
+  description: 舀
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: source_container_id; target_container_id|target_pose; scoop_depth_mm;
+    tool_angle_deg
+  output_params: success(bool); transferred_volume_ml; spill_detected(bool); error_code
+  applicable_scenes: 家居/康养
+- name: dip
+  description: 蘸
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: tool_id|object_id; liquid_container_id; depth_mm; dwell_time_s
+  output_params: success(bool); dipped(bool); coating_level; error_code
+  applicable_scenes: 家居/康养
+- name: rinse
+  description: 冲洗
+  scene: 场景能力
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; water_flow_level; rinse_time_s; orientation_policy
+  output_params: success(bool); rinsed(bool); residue_level; error_code
+  applicable_scenes: 家居/医药/康养
+- name: peel
+  description: 削皮
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; start_edge_pose; peel_speed_mmps; force_limit_n
+  output_params: success(bool); peeled_pct; damage_detected(bool); error_code
+  applicable_scenes: 家居/康养
+- name: stir
+  description: 搅拌
+  scene: 场景能力
+  category: 操作
+  skill_type: 原子技能
+  input_params: container_id; pattern(circle|zigzag); rpm; duration_s
+  output_params: success(bool); homogeneity_score; vortex_level; error_code
+  applicable_scenes: 家居/工业
+- name: open_jar
+  description: 打开容器
+  scene: 场景能力
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; handle_pose|lid_pose; open_extent(angle|distance); force_limit_n;
+    timeout_s
+  output_params: success(bool); state(open); final_pose; resistance_level; error_code
+  applicable_scenes: 家居/康养
+- name: close_jar
+  description: 关闭容器
+  scene: 场景能力
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; close_target_pose; force_limit_n; latch_check(bool); timeout_s
+  output_params: success(bool); state(closed); latch_ok(bool); error_code
+  applicable_scenes: 家居/康养
+- name: unscrew
+  description: 松开
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: fastener_id; tool_id; direction(ccw); max_torque_nm; max_turns
+  output_params: success(bool); loosened(bool); turns_done; error_code
+  applicable_scenes: 工业
+- name: hold_large_obj
+  description: 搬起大型物品
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; grasp_points[]; balance_constraint; assist_mode
+  output_params: success(bool); secured(bool); com_offset_mm; error_code
+  applicable_scenes: 工业
+- name: hold_heavy_obj
+  description: 搬起重物
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; lift_points[]; max_load_kg; assist_mode
+  output_params: success(bool); secured(bool); load_ratio; error_code
+  applicable_scenes: 工业
+- name: cut
+  description: 切
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; cut_line; depth_mm; tool_speed_mmps
+  output_params: success(bool); cut_complete(bool); kerf_width_mm; error_code
+  applicable_scenes: 家居
+- name: chop
+  description: 砍
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id|region_id; chop_count; strike_force_n; spacing_mm
+  output_params: success(bool); piece_count; size_uniformity; error_code
+  applicable_scenes: 家居
+- name: support
+  description: 支撑/扶起
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id; support_pose; max_load_kg; duration_s
+  output_params: success(bool); support_stable(bool); load_kg; error_code
+  applicable_scenes: 康养
+- name: wave
+  description: 招手
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: gesture_profile; repeat_n; speed_level
+  output_params: success(bool); gesture_done(bool); error_code
+  applicable_scenes: 康养
+- name: point
+  description: 指xx
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|target_point; hold_time_s; arm_preference
+  output_params: success(bool); pointing_error_deg; error_code
+  applicable_scenes: 康养
+- name: flick
+  description: 轻拍
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_pose; intensity_level; repeat_n
+  output_params: success(bool); contact_detected(bool); error_code
+  applicable_scenes: 康养
+- name: scratch
+  description: 抓挠
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_region; force_n; duration_s; stroke_pattern
+  output_params: success(bool); action_done(bool); error_code
+  applicable_scenes: 康养
+- name: measure
+  description: 测量尺寸/距离
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_id|measurement_points[]; metric(length|distance|angle); repeat_n
+  output_params: success(bool); value; unit; std_dev; confidence; error_code
+  applicable_scenes: 工业
+- name: drill
+  description: 钻孔
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: target_pose; hole_diameter_mm; depth_mm; rpm; feed_mmps
+  output_params: success(bool); drilled(bool); actual_depth_mm; error_code
+  applicable_scenes: 工业
+- name: weld
+  description: 焊接
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: seam_path_id; weld_mode; current_a; speed_mmps; shielding_gas
+  output_params: success(bool); seam_quality; defect_count; error_code
+  applicable_scenes: 工业
+- name: assemble
+  description: 组装部件
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: assembly_plan_id; parts_list[]; fixture_id; torque_specs
+  output_params: success(bool); completed_steps; assembly_state; error_code
+  applicable_scenes: 工业
+- name: disassemble
+  description: 拆卸部件
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: disassembly_plan_id; target_assembly_id; tool_set[]; safety_lockout(bool)
+  output_params: success(bool); removed_parts[]; damage_detected(bool); error_code
+  applicable_scenes: 工业
+- name: tighten
+  description: 拧紧（螺丝/螺栓）
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: fastener_id; tool_id; target_torque_nm; angle_strategy; max_retry
+  output_params: success(bool); tightened(bool); final_torque_nm; angle_deg; error_code
+  applicable_scenes: 工业
+- name: polish
+  description: 打磨/抛光
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: area_id; grit_level; pressure_n; duration_s; rpm
+  output_params: success(bool); surface_ra; gloss_level; error_code
+  applicable_scenes: 工业
+- name: inspect
+  description: 质检/检查
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_ids[]; inspection_plan; defect_types[]; threshold
+  output_params: success(bool); pass_fail; defect_list[]; report_id; error_code
+  applicable_scenes: 工业
+- name: slice
+  description: 切片
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; slice_thickness_mm; slice_count; tool_speed_mmps
+  output_params: success(bool); produced_count; thickness_error_mm; error_code
+  applicable_scenes: 家居
+- name: dice
+  description: 切丁
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; cube_size_mm; grid_pattern; pass_count
+  output_params: success(bool); cube_count; size_error_mm; error_code
+  applicable_scenes: 家居
+- name: open_door
+  description: 开门
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; handle_pose|lid_pose; open_extent(angle|distance); force_limit_n;
+    timeout_s
+  output_params: success(bool); state(open); final_pose; resistance_level; error_code
+  applicable_scenes: 家居
+- name: close_door
+  description: 关门
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; close_target_pose; force_limit_n; latch_check(bool); timeout_s
+  output_params: success(bool); state(closed); latch_ok(bool); error_code
+  applicable_scenes: 家居
+- name: open_fridge
+  description: 开冰箱
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: target_id; handle_pose|lid_pose; open_extent(angle|distance); force_limit_n;
+    timeout_s
+  output_params: success(bool); state(open); final_pose; resistance_level; error_code
+  applicable_scenes: 家居
+- name: hang
+  description: 悬挂/晾晒
+  scene: 专用技能
+  category: 操作
+  skill_type: 原子技能
+  input_params: object_id; hook_pose; orientation; drop_clearance_mm
+  output_params: success(bool); hung(bool); stability_score; error_code
+  applicable_scenes: 家居
+- name: scan_barcode
+  description: 扫描条码
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: target_id|image_roi; symbology_set[]; retry_limit; lighting_mode
+  output_params: success(bool); decoded_text; barcode_type; confidence; error_code
+  applicable_scenes: 商超
+- name: weigh
+  description: 称重
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: object_id; scale_id; tare_mode; stability_window_s
+  output_params: success(bool); weight_value; unit; stable(bool); error_code
+  applicable_scenes: 商超
+- name: bag
+  description: 装袋
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: item_ids[]; bag_type; max_weight_kg; packing_rule
+  output_params: success(bool); bagged_count; total_weight_kg; bag_integrity; error_code
+  applicable_scenes: 商超
+- name: arrange
+  description: 整理/摆放
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: area_id; layout_rule; priority_items[]; spacing_mm
+  output_params: success(bool); layout_score; moved_count; error_code
+  applicable_scenes: 商超
+- name: restock
+  description: 补货上架
+  scene: 专用技能
+  category: 操作
+  skill_type: 高级技能
+  input_params: shelf_id; item_list[]; target_facings; source_zone_id
+  output_params: success(bool); restocked_count; out_of_stock_list[]; compliance_score;
+    error_code
+  applicable_scenes: 商超
+- name: price_tag
+  description: 贴价签
+  scene: 专用技能
+  category: 操作
+  skill_type: 复合技能
+  input_params: item_id; tag_content(price|text); tag_position; verify_scan(bool)
+  output_params: success(bool); tagged(bool); verify_pass(bool); error_code
+  applicable_scenes: 商超
+common:
+- name: navigate
+  description: 绝对位置导航
+  skill_type: 原子技能
+  input:
+    target_location: 目标位置描述，如'办公桌旁边'、'会议室门口'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      final_position: 最终到达的位置描述
+- name: move
+  description: 相对位置移动
+  skill_type: 原子技能
+  input:
+    direction: 移动方向，如'forward'、'left'
+    distance: 移动距离描述，如'向前1米'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      actual_displacement: 实际移动距离描述
+- name: follow
+  description: 跟随运动目标
+  skill_type: 高级技能
+  input:
+    target: 跟随目标描述，如'前方的用户'
+    distance: 跟随距离描述（可选），如'保持1米距离'
+  output:
+    status: success/failed/interrupted
+    message: 执行结果描述
+    result:
+      target_lost: true/false
+- name: overcome_obstacle
+  description: 绕行障碍
+  skill_type: 高级技能
+  input:
+    obstacle: 障碍物描述，如'前方的椅子'
+    strategy: 绕行策略描述（可选），如'从左侧绕行'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: stop
+  description: 停止移动
+  skill_type: 原子技能
+  input: {}
+  output:
+    status: success
+    message: 已停止移动
+    result: {}
+- name: turn around
+  description: 转身
+  skill_type: 原子技能
+  input:
+    direction: 转向方向，如'left'、'right'、'around'
+    angle: 转动角度描述，如'90度'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: set height
+  description: 调整高度
+  skill_type: 原子技能
+  input:
+    height: 目标高度描述，如'桌面高度'、'升高10厘米'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      current_height: 当前高度描述
+- name: set_posture
+  description: 调整姿态
+  skill_type: 原子技能
+  input:
+    posture: 目标姿态描述，如'站立'、'蹲下'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      current_posture: 当前姿态描述
+- name: lean
+  description: 倾斜
+  skill_type: 原子技能
+  input:
+    direction: 倾斜方向，如'forward'、'left'
+    angle: 倾斜角度描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      current_angle: 当前倾斜角度描述
+- name: reset
+  description: 复位
+  skill_type: 原子技能
+  input: {}
+  output:
+    status: success
+    message: 已复位到初始姿态
+    result: {}
+- name: orient
+  description: 调整朝向
+  skill_type: 原子技能
+  input:
+    target: 朝向目标描述，如'面向白板'、'朝向用户'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: scan
+  description: 高级技能，返回全局结果
+  skill_type: 高级技能
+  input:
+    target: 扫描目标描述，如'整个房间'、'桌面上的物品'
+    goal: 扫描目的描述，如'找到红色杯子'、'识别所有物体'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      objects_found:
+      - 识别到的物体列表
+      scene_description: 场景整体描述
+- name: look_at
+  description: 调整摄像头观测
+  skill_type: 原子技能
+  input:
+    target: 观测目标描述，如'桌上的杯子'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      target_visible: true/false
+      target_description: 目标物体的视觉信息描述
+- name: grasp
+  description: 抓住
+  skill_type: 原子技能
+  input:
+    target: 抓取目标描述，如'桌上的红色杯子'
+    grasp_type: 抓取方式，如'pinch'、'power'（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasped_object: 成功抓取的物体描述
+      grasp_stable: true/false
+- name: release
+  description: 松开抓住的东西
+  skill_type: 原子技能
+  input:
+    target_location: 释放位置描述，如'桌面上'（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      released_object: 释放的物体描述
+- name: regrasp
+  description: 调整手中握住的度物体的姿势
+  skill_type: 复合技能
+  input:
+    target: 重新抓取的目标描述
+    grasp_type: 新的抓取方式（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasped_object: 成功抓取的物体描述
+      grasp_stable: true/false
+- name: suction
+  description: 吸附式抓取（吸盘手）
+  skill_type: 原子技能
+  input:
+    target: 吸附目标描述，如'玻璃板'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      suction_stable: true/false
+- name: close_effector
+  description: 夹取（夹爪）
+  skill_type: 原子技能
+  input:
+    target: 夹取目标描述
+    force: 夹取力度描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasp_stable: true/false
+- name: open_effector
+  description: 释放（夹爪）
+  skill_type: 原子技能
+  input:
+    target: 夹取目标描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: hold
+  description: 持有
+  skill_type: 原子技能
+  input:
+    target: 持握目标描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: drop
+  description: 丢弃，扔
+  skill_type: 原子技能
+  input:
+    target_location: 投放位置描述，如'垃圾桶'、'地面'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: carry
+  description: 拿着
+  skill_type: 原子技能
+  input:
+    target: 携带目标描述，如'箱子'、'托盘'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      carrying_object: 正在携带的物体描述
+- name: lift
+  description: 抬起
+  skill_type: 原子技能
+  input:
+    target: 抬起目标描述
+    height: 抬起高度描述，如'抬高20厘米'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      current_height: 当前高度描述
+- name: handout
+  description: 递给
+  skill_type: 复合技能
+  input:
+    target: 递出物体描述
+    recipient: 接收方描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      received: true/false
+- name: takeover
+  description: 接过
+  skill_type: 复合技能
+  input:
+    target: 接取物体描述
+    source: 来源方描述，如'用户'、'传送带'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasped_object: 成功接取的物体描述
+      grasp_stable: true/false
+- name: push
+  description: 推
+  skill_type: 原子技能
+  input:
+    target: 推动目标描述
+    direction: 推动方向描述
+    distance: 推动距离描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      actual_displacement: 目标实际移动距离描述
+- name: pull
+  description: 拉
+  skill_type: 原子技能
+  input:
+    target: 拉动目标描述
+    direction: 拉动方向描述
+    distance: 拉动距离描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      actual_displacement: 目标实际移动距离描述
+- name: press
+  description: 按压
+  skill_type: 原子技能
+  input:
+    target: 按压目标描述，如'电梯按钮'
+    force: 按压力度描述（可选）
+    duration: 按压时长描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: rotate
+  description: 旋转/拧转
+  skill_type: 原子技能
+  input:
+    target: 旋转目标描述
+    direction: '''clockwise''或''counterclockwise'''
+    angle: 旋转角度描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      actual_angle: 实际旋转角度描述
+- name: open_box
+  description: 打开盒子
+  skill_type: 高级技能
+  input:
+    target: 箱子描述，如'纸箱'、'工具箱'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      opened: true/false
+      contents_visible: true/false
+- name: close_box
+  description: 关上盒子
+  skill_type: 高级技能
+  input:
+    target: 箱子描述，如'纸箱'
+    seal: 封箱方式描述（可选），如'用胶带封口'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      closed: true/false
+- name: wipe
+  description: 擦
+  skill_type: 原子技能
+  input:
+    target: 擦拭目标描述，如'桌面'
+    tool: 擦拭工具描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: clean
+  description: 打扫，收拾
+  skill_type: 高级技能
+  input:
+    target: 清洁目标描述，如'厨房台面'
+    method: 清洁方式描述（可选），如'擦拭'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: spray
+  description: 喷洒
+  skill_type: 高级技能
+  input:
+    target: 喷洒目标描述
+    substance: 喷洒物质描述（可选）
+    amount: 喷洒量描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: sort
+  description: 高级技能，分拣
+  skill_type: 高级技能
+  input:
+    target: 分拣目标描述，如'桌上的快递包裹'
+    criteria: 分拣标准描述，如'按颜色分类'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      sorted_count: 0
+      categories:
+      - 分类结果描述
+- name: pour
+  description: 倾倒
+  skill_type: 原子技能
+  input:
+    source: 倾倒源容器描述
+    target: 倾倒目标容器描述
+    amount: 倾倒量描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      poured_amount: 实际倾倒量描述
+- name: align
+  description: 对齐
+  skill_type: 高级技能
+  input:
+    target: 需要对齐的物体描述
+    reference: 对齐参考物描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      alignment_error: 对齐偏差描述
+- name: pick
+  description: 拾起
+  skill_type: 原子技能
+  input:
+    target: 需要拾起的物体描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: place
+  description: 放置
+  skill_type: 原子技能
+  input:
+    traget: 待放置的物体描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: insert
+  description: 插入，放入（花瓶/笔帽）
+  skill_type: 原子技能
+  input:
+    target: 插入物体描述，如'U盘'
+    location: 插入位置描述，如'USB接口'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      inserted: true/false
+- name: stack
+  description: 堆放
+  skill_type: 复合技能
+  input:
+    target: 堆叠物体描述，如'箱子'
+    location: 堆叠目标位置描述
+    count: 堆叠数量描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: unstack
+  description: 拿走叠放的物体
+  skill_type: 复合技能
+  input:
+    target: 拆垛目标描述，如'最上层的箱子'
+    destination: 放置目标位置描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      unstacked_object: 取下的物体描述
+retail:
+- name: scan_barcode
+  description: 扫描条码
+  skill_type: 复合技能
+  input:
+    target: 扫描目标描述，如'商品条码'、'二维码'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      barcode_value: 扫描到的条码值
+      product_info: 商品信息描述
+- name: weigh
+  description: 称重
+  skill_type: 复合技能
+  input:
+    target: 称重目标描述，如'蔬菜'、'零件'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      value: 0.0
+      unit: 单位，如'g'、'kg'
+- name: bag
+  description: 装袋
+  skill_type: 复合技能
+  input:
+    target: 装袋物体描述，如'商品'
+    bag: 袋子描述，如'购物袋'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      items_bagged: 装入物体描述
+- name: arrange
+  description: 整理/摆放
+  skill_type: 高级技能
+  input:
+    target: 整理目标描述，如'货架上的商品'
+    rule: 整理规则描述，如'按高度排列'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: restock
+  description: 补货上架
+  skill_type: 高级技能
+  input:
+    target: 补货商品描述，如'饮料区的矿泉水'
+    source: 货源位置描述
+    quantity: 补货数量描述（可选），如'补满'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      restocked_count: 0
+- name: price_tag
+  description: 贴价签
+  skill_type: 复合技能
+  input:
+    target: 贴标签的商品描述
+    tag: 价签描述，如'3.5元的价签'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      tagged: true/false
+- name: sweep
+  description: 清扫
+  skill_type: 高级技能
+  input:
+    target: 清扫目标区域描述，如'走廊地面'
+    tool: 清扫工具描述（可选），如'扫帚'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+home:
+- name: insert
+  description: 插入，放入（花瓶/笔帽）
+  skill_type: 原子技能
+  input:
+    target: 插入物体描述，如'U盘'
+    location: 插入位置描述，如'USB接口'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      inserted: true/false
+- name: fold
+  description: 折叠
+  skill_type: 原子技能
+  input:
+    target: 折叠目标描述
+    method: 折叠方式描述（可选），如'对折'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: unfold
+  description: 展开
+  skill_type: 原子技能
+  input:
+    target: 展开目标描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: tuck
+  description: 塞入
+  skill_type: 原子技能
+  input:
+    target: 塞入目标描述
+    location: 塞入位置描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: stretch
+  description: 拉伸
+  skill_type: 原子技能
+  input:
+    target: 拉伸目标描述
+    direction: 拉伸方向描述（可选）
+    extent: 拉伸程度描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: cover
+  description: 盖住
+  skill_type: 原子技能
+  input:
+    target: 被覆盖物体描述
+    cover_object: 覆盖物描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: uncover
+  description: 揭开
+  skill_type: 原子技能
+  input:
+    target: 需要揭开覆盖物的物体描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      uncovered_object: 露出的物体描述
+- name: sweep
+  description: 清扫
+  skill_type: 高级技能
+  input:
+    target: 清扫目标区域描述，如'走廊地面'
+    tool: 清扫工具描述（可选），如'扫帚'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: scoop
+  description: 舀
+  skill_type: 原子技能
+  input:
+    target: 舀取目标描述
+    tool: 舀取工具描述
+    amount: 舀取量描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      scooped_amount: 实际舀取量描述
+- name: dip
+  description: 蘸
+  skill_type: 原子技能
+  input:
+    target: 蘸取物体描述
+    substance: 蘸取物质描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: rinse
+  description: 冲洗
+  skill_type: 复合技能
+  input:
+    target: 冲洗目标描述，如'蔬菜'、'餐具'
+    duration: 冲洗时长描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: peel
+  description: 削皮
+  skill_type: 原子技能
+  input:
+    target: 剥皮目标描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: stir
+  description: 搅拌
+  skill_type: 原子技能
+  input:
+    target: 搅拌目标描述
+    tool: 搅拌工具描述（可选）
+    duration: 搅拌时长描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: open_jar
+  description: 打开容器
+  skill_type: 高级技能
+  input:
+    target: 容器描述，如'果酱瓶'、'密封罐'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      opened: true/false
+- name: close_jar
+  description: 关闭容器
+  skill_type: 高级技能
+  input:
+    target: 容器描述，如'果酱瓶'
+    seal_level: 密封程度描述（可选），如'拧紧'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      sealed: true/false
+- name: cut
+  description: 切
+  skill_type: 原子技能
+  input:
+    target: 切割目标描述
+    tool: 切割工具描述
+    location: 切割位置描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: chop
+  description: 砍
+  skill_type: 原子技能
+  input:
+    target: 剁切目标描述
+    size: 切块大小描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: slice
+  description: 切片
+  skill_type: 复合技能
+  input:
+    target: 切片目标描述
+    thickness: 切片厚度描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      slice_count: 切片数量描述
+- name: dice
+  description: 切丁
+  skill_type: 复合技能
+  input:
+    target: 切丁目标描述
+    size: 切丁大小描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: open_door
+  description: 开门
+  skill_type: 高级技能
+  input:
+    target: 门的描述，如'办公室门'、'柜门'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      opened: true/false
+- name: close_door
+  description: 关门
+  skill_type: 高级技能
+  input:
+    target: 门的描述，如'办公室门'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      closed: true/false
+- name: open_fridge
+  description: 开冰箱
+  skill_type: 高级技能
+  input:
+    target: 冰箱描述，如'厨房冰箱'
+    compartment: 开启区域描述（可选），如'冷藏层'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      opened: true/false
+- name: hang
+  description: 悬挂/晾晒
+  skill_type: 原子技能
+  input:
+    target: 悬挂目标描述
+    location: 悬挂位置描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: support
+  description: 支撑/扶起
+  skill_type: 原子技能
+  input:
+    target: 支撑目标描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: wave
+  description: 招手
+  skill_type: 原子技能
+  input:
+    target: 招手对象描述，如'门口的访客'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: point
+  description: 指xx
+  skill_type: 原子技能
+  input:
+    target: 指向目标描述，如'左边的门'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: flick
+  description: 轻拍
+  skill_type: 原子技能
+  input:
+    target: 轻拍目标描述
+    force: 力度描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: scratch
+  description: 抓挠
+  skill_type: 原子技能
+  input:
+    target: 抓挠目标描述
+    area: 抓挠区域描述（可选）
+    duration: 抓挠时长描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: stack
+  description: 堆放
+  skill_type: 复合技能
+  input:
+    target: 堆叠物体描述，如'箱子'
+    location: 堆叠目标位置描述
+    count: 堆叠数量描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: unstack
+  description: 拿走叠放的物体
+  skill_type: 复合技能
+  input:
+    target: 拆垛目标描述，如'最上层的箱子'
+    destination: 放置目标位置描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      unstacked_object: 取下的物体描述
+office:
+- name: stamp
+  description: 盖章
+  skill_type: 复合技能
+  input:
+    target: 盖章目标描述，如'合同文件'
+    location: 盖章位置描述，如'右下角签名处'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+industrial:
+- name: unscrew
+  description: 松开
+  skill_type: 原子技能
+  input:
+    target: 螺丝/螺栓描述
+    location: 拧出位置描述
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: hold_large_obj
+  description: 搬起大型物品
+  skill_type: 原子技能
+  input:
+    target: 大型物体描述
+    grip_points: 抓握点描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasp_stable: true/false
+- name: hold_heavy_obj
+  description: 搬起重物
+  skill_type: 原子技能
+  input:
+    target: 重型物体描述
+    weight_estimate: 重量估计描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      grasp_stable: true/false
+- name: measure
+  description: 测量尺寸/距离
+  skill_type: 原子技能
+  input:
+    target: 测量目标描述
+    metric: 测量维度描述，如'长度'、'距离'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      value: 0.0
+      unit: 单位，如'mm'、'cm'、'm'
+- name: drill
+  description: 钻孔
+  skill_type: 原子技能
+  input:
+    target: 钻孔位置描述
+    depth: 钻孔深度描述（可选）
+    diameter: 孔径描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: weld
+  description: 焊接
+  skill_type: 原子技能
+  input:
+    target: 焊接目标描述
+    method: 焊接方式描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: assemble
+  description: 组装部件
+  skill_type: 高级技能
+  input:
+    target: 组装目标描述，如'电脑主机'
+    parts: 零件描述（可选）
+    instruction: 组装说明描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      assembled: true/false
+      missing_parts:
+      - 缺失零件描述
+- name: disassemble
+  description: 拆卸部件
+  skill_type: 高级技能
+  input:
+    target: 拆卸目标描述，如'旧设备'
+    method: 拆卸方式描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      parts_removed:
+      - 拆下的零件描述
+- name: tighten
+  description: 拧紧（螺丝/螺栓）
+  skill_type: 高级技能
+  input:
+    target: 拧紧目标描述，如'螺栓组'
+    tool: 工具描述（可选），如'扳手'
+    torque: 目标扭矩描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: polish
+  description: 打磨/抛光
+  skill_type: 原子技能
+  input:
+    target: 打磨目标描述
+    tool: 打磨工具描述（可选）
+    extent: 打磨程度描述（可选）
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result: {}
+- name: inspect
+  description: 质检/检查
+  skill_type: 高级技能
+  input:
+    target: 检查目标描述，如'焊缝质量'
+    criteria: 检查标准描述，如'无裂缝'
+  output:
+    status: success/failed
+    message: 执行结果描述
+    result:
+      passed: true/false
+      defects:
+      - 发现的缺陷描述
