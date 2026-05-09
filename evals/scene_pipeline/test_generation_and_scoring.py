@@ -15,6 +15,8 @@ from evals.scene_pipeline.pipeline import _stage_or_downstream_outputs_exist
 from evals.scene_pipeline.batch import resolve_single_scene_dir
 from evals.scene_pipeline.paths import EVAL_GENERATED_DIR
 from evals.scene_pipeline.steps.generate_commands import write_user_command_md
+from evals.scene_pipeline.skill_registry import get_predefined_tool_names, get_scene_skills
+from evals.scene_pipeline.steps.generate_server import generate_server
 from evals.scene_pipeline.steps.generate_tests import (
     EVAL_PROTOCOL_VERSION,
     _augment_test_meta_with_semantic_variants,
@@ -27,6 +29,14 @@ from evals.scene_pipeline.steps.generate_tests import (
     _tidy_expected_for_text,
     _write_test_task_planning,
 )
+
+
+class _NoopLLMClient:
+    def chat_json(self, *args, **kwargs):
+        return {}
+
+    def chat_text(self, *args, **kwargs):
+        return ""
 
 
 def _load_real_home_living_module(module_name: str, relative_path: str):
@@ -181,6 +191,36 @@ def test_write_user_command_md_is_atomic_and_replaces_existing_file(tmp_path) ->
     assert '"把杯子递给我"' in content
     assert '抓取失败："如果没抓住杯子就重试"' in content
     assert not list(tmp_path.glob(".user_command.md.*.tmp"))
+
+
+def test_predefined_scene_tools_are_deduped_before_server_generation(tmp_path) -> None:
+    predefined_skills, category = get_scene_skills("kitchen")
+
+    assert category == "home"
+    predefined_tool_names = get_predefined_tool_names(predefined_skills)
+    assert predefined_tool_names.count("insert") == 1
+    assert predefined_tool_names.count("stack") == 1
+    assert predefined_tool_names.count("unstack") == 1
+
+    output_path = tmp_path / "server.py"
+    all_tools = generate_server(
+        _NoopLLMClient(),
+        {
+            "scene_display_name": "厨房",
+            "extra_tools": ["stack", "stack"],
+        },
+        output_path,
+        predefined_skills=predefined_skills,
+    )
+
+    assert all_tools.count("insert") == 1
+    assert all_tools.count("stack") == 1
+    assert all_tools.count("unstack") == 1
+
+    server_code = output_path.read_text(encoding="utf-8")
+    assert server_code.count("def insert(") == 1
+    assert server_code.count("def stack(") == 1
+    assert server_code.count("def unstack(") == 1
 
 
 def test_semantic_variant_stabilization_uses_source_command() -> None:

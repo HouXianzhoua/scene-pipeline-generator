@@ -9,6 +9,11 @@ from ..llm_client import LLMClient
 
 logger = logging.getLogger(__name__)
 
+
+def _dedupe_tool_names(tool_names: list[str]) -> list[str]:
+    """Preserve order while removing duplicate tool names."""
+    return list(dict.fromkeys(tool_names))
+
 _COLOR_WORDS = (
     "白色", "黑色", "灰色", "蓝色", "蓝灰色", "绿色", "黄色", "红色", "棕色",
     "紫色", "橙色", "粉色", "米白色", "浅色", "深色", "金色", "银色",
@@ -35,6 +40,7 @@ def generate_mocks(
     tests_dir: Path,
 ) -> dict:
     """Generate mock_tool_results.py and mock_server.py, return mock metadata."""
+    all_tools = _dedupe_tool_names(all_tools)
     mock_meta = _generate_mock_data(client, scene_data, commands_data)
 
     _write_mock_tool_results(mock_meta, all_tools, tests_dir / "mock_tool_results.py")
@@ -462,6 +468,7 @@ def _find_furniture(scene_data: dict, name_en: str) -> dict | None:
 
 
 def _write_mock_tool_results(mock_meta: dict, all_tools: list[str], output_path: Path) -> None:
+    all_tools = _dedupe_tool_names(all_tools)
     lines = [
         '"""Mock tool return values and providers for different test scenarios."""',
         "",
@@ -641,6 +648,7 @@ def _generate_helper_functions() -> list[str]:
 
 
 def _generate_common_defaults(all_tools: list[str]) -> list[str]:
+    all_tools = _dedupe_tool_names(all_tools)
     registered: set[str] = set()
 
     def _default(tool: str, val: str) -> str:
@@ -808,6 +816,7 @@ def _write_mock_server(
     mock_meta: dict, all_tools: list[str], scene_data: dict, output_path: Path
 ) -> None:
     """Generate mock_server.py that mirrors server.py tool interfaces."""
+    all_tools = _dedupe_tool_names(all_tools)
     all_factories = []
     for f in mock_meta.get("mock_factories", []):
         all_factories.append(f["name"])
@@ -951,6 +960,7 @@ if __name__ == "__main__":
 
 def _generate_mock_server_tools(all_tools: list[str], extra_tools: list[str]) -> str:
     """Generate mock tool stubs that delegate to _call()."""
+    all_tools = _dedupe_tool_names(all_tools)
     base_tool_code = {
         "move": '''
 @mcp.tool()

@@ -513,7 +513,7 @@ def generate_server(
 
     # --- Priority 3: LLM-generated tools (only for uncovered extra_tools) ---
     uncovered = [
-        t for t in extra_tools_from_analysis
+        t for t in _dedupe_tool_names(extra_tools_from_analysis)
         if t not in predefined_tool_names and t not in _BASE_TOOL_NAMES_SET
     ]
     llm_tool_names: list[str] = []
@@ -541,10 +541,11 @@ def generate_server(
     output_path.write_text(server_code, encoding="utf-8")
     logger.info("Wrote %s", output_path)
 
-    all_tools = list(_BASE_TOOL_NAMES_SET) + predefined_tool_names + llm_tool_names
     # Preserve a stable ordering: base tools first in their canonical order.
     from ..config import BASE_TOOLS
-    all_tools = list(BASE_TOOLS) + predefined_tool_names + llm_tool_names
+    all_tools = _dedupe_tool_names(
+        list(BASE_TOOLS) + predefined_tool_names + llm_tool_names
+    )
 
     return all_tools
 
@@ -557,6 +558,11 @@ _BASE_TOOL_NAMES_SET = {
     "get_robot_pose", "place_down", "back_station",
     "parameter_store", "perception_custom", "fetch_box", "put_box",
 }
+
+
+def _dedupe_tool_names(tool_names: list[str]) -> list[str]:
+    """Preserve order while removing duplicate tool names."""
+    return list(dict.fromkeys(tool_names))
 
 
 def _generate_llm_tools(

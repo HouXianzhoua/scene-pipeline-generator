@@ -195,6 +195,29 @@ def _normalise_name(name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_]", "_", name.strip()).strip("_")
 
 
+def _dedupe_skills_by_tool_name(skills: list[dict]) -> list[dict]:
+    """Return skills with duplicate generated tool names removed.
+
+    YAML categories can repeat the same skill name, for example when a
+    scene-specific category re-lists a common capability.  Keep the first
+    definition so common tool semantics stay stable, and remove later entries
+    before generating Python functions or all_tools.json.
+    """
+    result: list[dict] = []
+    seen: set[str] = set()
+    for skill in skills:
+        name = skill.get("name")
+        if not name:
+            continue
+        tool_name = _normalise_name(str(name))
+        if tool_name in seen:
+            logger.debug("Skipping duplicate predefined skill %r", name)
+            continue
+        seen.add(tool_name)
+        result.append(skill)
+    return result
+
+
 def filter_skills_needing_code(skills: list[dict]) -> list[dict]:
     """Return skills that are NOT already covered by BASE_SERVER_TEMPLATE.
 
@@ -203,7 +226,7 @@ def filter_skills_needing_code(skills: list[dict]) -> list[dict]:
     - it is in the ``_BASE_TOOL_COVERED_SKILLS`` semantic mapping.
     """
     result = []
-    for skill in skills:
+    for skill in _dedupe_skills_by_tool_name(skills):
         name = skill["name"]
         norm = _normalise_name(name)
         if name in _BASE_TOOL_COVERED_SKILLS:
