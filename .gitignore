@@ -4,5 +4,5 @@ __pycache__/
 
 data/
 report/
-evals/scene_pipeline/generated/
-evals/scene_pipeline/eval_runs/
+scene_pipeline/generated/
+scene_pipeline/eval_runs/

@@ -19,18 +19,21 @@ Generated datasets are written to:
 Override it when needed:
 
 ```bash
-OUTPUT_DIR=/path/to/data bash evals/scene_pipeline/run_generate_ui.sh
+OUTPUT_DIR=/path/to/data bash scripts/run_generate_ui.sh
 ```
 
 ## Quick Start
 
 ```bash
 python3 -m pip install -r requirements.txt
-bash evals/scene_pipeline/run_generate_ui.sh
+bash scripts/run_generate_ui.sh
 ```
 
 CLI generation:
 
 ```bash
-python3 -m evals.scene_pipeline --image /path/to/scene.jpg --output-dir /home/houxianzhou/kaiwu_workspace/scene-pipeline-eval-kit/data
+python3 -m scene_pipeline --image /path/to/scene.jpg --output-dir /home/houxianzhou/kaiwu_workspace/scene-pipeline-eval-kit/data
 ```
+
+Legacy entry points under `evals.scene_pipeline` remain as compatibility
+wrappers, but new commands should use `scene_pipeline`.

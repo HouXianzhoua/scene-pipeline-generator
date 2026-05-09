@@ -1,4 +1,4 @@
-"""CLI entry point for the scene pipeline under evals."""
+"""CLI entry point for the scene pipeline generator."""
 
 import argparse
 import logging
@@ -18,20 +18,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         epilog="""\
 Examples:
   # Generate one scene-eval chain with default settings
-  python -m evals.scene_pipeline --image photo.jpg
+  python -m scene_pipeline --image photo.jpg
 
   # Generate 1-5 photos as one batch
-  python -m evals.scene_pipeline \\
+  python -m scene_pipeline \\
       --image home1.jpg,home2.jpg \\
       --output-dir ./data
 
   # Use GPT-4o for generation
-  python -m evals.scene_pipeline \\
+  python -m scene_pipeline \\
       --image photo.jpg \\
       --model gpt-4o --base-url https://api.openai.com/v1 --api-key $KEY
 
   # Resume a failed run (skip steps that already have output)
-  python -m evals.scene_pipeline \\
+  python -m scene_pipeline \\
       --image photo.jpg --resume \\
       --output-dir ./data/my_scene \\
       --model gpt-4o --api-key $KEY

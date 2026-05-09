@@ -1,6 +1,6 @@
 # Scene Pipeline 生成与评测边界说明
 
-`evals/scene_pipeline` 在 `scene-pipeline-eval-kit` 中负责“评测链路生成”能力，生成产物直接写入同一仓库的 `data/`，供评测运行 UI/CLI 使用。
+`scene_pipeline` 是独立 generator 仓库中的“评测链路生成”包，生成产物默认写入 `scene-pipeline-eval-kit/data/`，供评测运行 UI/CLI 使用。
 
 ## 当前边界
 
@@ -17,9 +17,11 @@
 
 ## 当前入口
 
-- CLI: `python -m evals.scene_pipeline --image ...`
-- 生成 UI: `bash evals/scene_pipeline/run_generate_ui.sh`
-- 生成 UI 等价入口: `bash evals/scene_pipeline/run_ui.sh`
+- CLI: `python -m scene_pipeline --image ...`
+- 生成 UI: `bash scripts/run_generate_ui.sh`
+- 生成 UI 等价入口: `bash scripts/run_ui.sh`
+
+`python -m evals.scene_pipeline` 仍保留为兼容入口，但新调用应使用 `scene_pipeline`。
 
 ## 生成产物
 

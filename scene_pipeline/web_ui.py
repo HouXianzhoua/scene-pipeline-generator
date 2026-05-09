@@ -2,8 +2,8 @@
 
 Launch with::
 
-    python -m evals.scene_pipeline --generate-ui
-    python -m evals.scene_pipeline --generate-ui --model gpt-5.5 --api-key $KEY
+    python -m scene_pipeline --generate-ui
+    python -m scene_pipeline --generate-ui --model gpt-5.5 --api-key $KEY
 """
 
 from __future__ import annotations

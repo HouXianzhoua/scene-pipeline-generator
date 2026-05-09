@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 MODEL="${MODEL:-gpt-5.5}"
 BASE_URL="${BASE_URL:-https://api.chatanywhere.tech/v1}"
@@ -12,7 +12,7 @@ export GRADIO_SERVER_PORT="${GRADIO_SERVER_PORT:-7860}"
 
 cd "$REPO_ROOT"
 
-python3 -m evals.scene_pipeline --generate-ui \
+python3 -m scene_pipeline --generate-ui \
     --model "$MODEL" \
     --base-url "$BASE_URL" \
     --api-key "$API_KEY" \

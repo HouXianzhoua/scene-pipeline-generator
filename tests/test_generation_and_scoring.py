@@ -6,18 +6,18 @@ import types
 
 import pytest
 
-from evals.scene_pipeline.pipeline import _ARTIFACT_NAMES
-from evals.scene_pipeline.pipeline import _atomic_write_text as _pipeline_atomic_write_text
-from evals.scene_pipeline.pipeline import _cleanup_stage_and_downstream
-from evals.scene_pipeline.pipeline import _ensure_generated_tests_nonempty
-from evals.scene_pipeline.pipeline import _is_valid_tests_artifact
-from evals.scene_pipeline.pipeline import _stage_or_downstream_outputs_exist
-from evals.scene_pipeline.batch import resolve_single_scene_dir
-from evals.scene_pipeline.paths import EVAL_GENERATED_DIR
-from evals.scene_pipeline.steps.generate_commands import write_user_command_md
-from evals.scene_pipeline.skill_registry import get_predefined_tool_names, get_scene_skills
-from evals.scene_pipeline.steps.generate_server import generate_server
-from evals.scene_pipeline.steps.generate_tests import (
+from scene_pipeline.pipeline import _ARTIFACT_NAMES
+from scene_pipeline.pipeline import _atomic_write_text as _pipeline_atomic_write_text
+from scene_pipeline.pipeline import _cleanup_stage_and_downstream
+from scene_pipeline.pipeline import _ensure_generated_tests_nonempty
+from scene_pipeline.pipeline import _is_valid_tests_artifact
+from scene_pipeline.pipeline import _stage_or_downstream_outputs_exist
+from scene_pipeline.batch import resolve_single_scene_dir
+from scene_pipeline.paths import EVAL_GENERATED_DIR
+from scene_pipeline.steps.generate_commands import write_user_command_md
+from scene_pipeline.skill_registry import get_predefined_tool_names, get_scene_skills
+from scene_pipeline.steps.generate_server import generate_server
+from scene_pipeline.steps.generate_tests import (
     EVAL_PROTOCOL_VERSION,
     _augment_test_meta_with_semantic_variants,
     _collect_expected_for_text,
@@ -40,7 +40,13 @@ class _NoopLLMClient:
 
 
 def _load_real_home_living_module(module_name: str, relative_path: str):
-    root = Path(__file__).parent / "scenarios" / "real_home_living" / "tests"
+    root = (
+        Path(__file__).parents[1]
+        / "scene_pipeline"
+        / "scenarios"
+        / "real_home_living"
+        / "tests"
+    )
     path = root / relative_path
     spec = importlib.util.spec_from_file_location(module_name, path)
     module = importlib.util.module_from_spec(spec)
