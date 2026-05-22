@@ -65,6 +65,9 @@ bash scripts/run_generate_ui.sh
 The script will re-enter the configured conda environment automatically and set
 `PYTHONNOUSERSITE=1` so packages from `~/.local` are ignored.
 
+The UI always runs in resume mode: existing step outputs are reused when they
+are present, and missing or failed steps continue from the available output.
+
 ## Run The CLI
 
 Generate from one image:

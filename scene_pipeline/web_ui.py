@@ -251,16 +251,9 @@ def run_pipeline_ui(
     max_tokens: int,
     scene_category: str,
     output_dir: str,
-    resume: bool,
 ):
     """Gradio generator that drives the pipeline and yields UI updates."""
-    if image is None and not resume:
-        yield (
-            '<div style="color:#ef4444;padding:8px">请先上传场景照片</div>',
-            None, None, None, None, None, None, None, None, "",
-        )
-        return
-
+    resume = True
     if isinstance(image, list):
         image_paths = [str(getattr(item, "name", item)) for item in image if item]
     elif isinstance(image, str):
@@ -271,9 +264,8 @@ def run_pipeline_ui(
         image_paths = [str(image)] if image else []
 
     if not image_paths:
-        message = "恢复运行需要提供场景图片或有效的输入文件列表" if resume else "请先上传场景照片"
         yield (
-            f'<div style="color:#ef4444;padding:8px">{html.escape(message)}</div>',
+            '<div style="color:#ef4444;padding:8px">请先上传场景照片</div>',
             None, None, None, None, None, None, None, None, "",
         )
         return
@@ -762,7 +754,6 @@ def build_generate_app(defaults: UIDefaults | None = None) -> gr.Blocks:
                     output_dir = gr.Textbox(value=defaults.output_dir, label="输出目录（多图 batch root）")
 
         with gr.Row():
-            resume_chk = gr.Checkbox(label="恢复运行 (Resume)", value=defaults.resume)
             run_btn = gr.Button("开始生成评测链路", variant="primary", elem_id="run-btn")
 
         progress_html = gr.HTML(value=_render_progress({}, {}), label="生成进度")
@@ -789,7 +780,6 @@ def build_generate_app(defaults: UIDefaults | None = None) -> gr.Blocks:
                 max_tokens,
                 scene_category,
                 output_dir,
-                resume_chk,
             ],
             outputs=[
                 progress_html,
