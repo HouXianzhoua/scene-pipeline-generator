@@ -87,6 +87,13 @@ _ACTIVE_GRADIO_APP: gr.Blocks | None = None
 _AUTO_CLOSE_AFTER_GENERATE = False
 
 
+def _env_flag(name: str, default: bool = False) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
 STEP_DEFS: list[dict[str, str]] = [
     {"id": "compress", "name": "图像压缩"},
     {"id": "analyze", "name": "场景分析"},
@@ -820,7 +827,7 @@ def launch(*, cli_args: UIDefaults | None = None, mode: str = "generate", **kwar
     app = build_generate_app(defaults=cli_args)
     server_port = int(os.environ.get("GRADIO_SERVER_PORT") or kwargs.get("server_port", 7860))
     _ACTIVE_GRADIO_APP = app
-    _AUTO_CLOSE_AFTER_GENERATE = True
+    _AUTO_CLOSE_AFTER_GENERATE = _env_flag("SCENE_PIPELINE_AUTO_CLOSE", False)
     allowed_paths = {str(EVAL_GENERATED_DIR)}
     if cli_args and cli_args.output_dir:
         allowed_paths.add(str(Path(cli_args.output_dir).expanduser()))

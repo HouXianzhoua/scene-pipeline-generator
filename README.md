@@ -38,6 +38,7 @@ The launch scripts read these environment variables:
 | `OUTPUT_DIR` | `/home/houxianzhou/kaiwu_workspace/scene-pipeline-eval-kit/data` | Directory where generated scene datasets are written. Override this on other machines. |
 | `GRADIO_SERVER_PORT` | `7860` | Port for the Gradio UI. Use another port if it is occupied. |
 | `CONDA_ENV` | `scene-pipeline` | Conda environment used by the launch scripts. |
+| `SCENE_PIPELINE_AUTO_CLOSE` | `0` | Set to `1` to close the UI automatically after a generation run finishes. |
 
 The Python CLI defaults are defined in `scene_pipeline/config.py`. The scripts
 override the base URL default for the UI startup command.
