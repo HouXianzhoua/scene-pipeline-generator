@@ -757,7 +757,7 @@ def build_generate_app(defaults: UIDefaults | None = None) -> gr.Blocks:
             run_btn = gr.Button("开始生成评测链路", variant="primary", elem_id="run-btn")
 
         progress_html = gr.HTML(value=_render_progress({}, {}), label="生成进度")
-        out_commands = gr.Markdown(label="生成结果 / Batch 摘要")
+        out_commands = gr.Markdown(label="生成结果 / Batch 摘要", visible=False)
         output_dir_box = gr.Textbox(label="生成输出目录", interactive=False)
 
         out_scene = gr.JSON(label="scene_analysis.json", visible=False)
